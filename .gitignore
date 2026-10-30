@@ -1,0 +1,13 @@
+# build output
+build/
+*.class
+*.jar
+
+# editors
+.idea/
+*.iml
+.vscode/
+
+# windows
+Thumbs.db
+desktop.ini
