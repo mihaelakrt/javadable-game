@@ -194,7 +194,7 @@ public class PuzzlePanel extends JPanel {
         yours.setShowDiff(false);
         yours.setSolved(false);
 
-        String saved = profile.code[puzzle.index];
+        String saved = profile.codeFor(puzzle, LocalDate.now());
         editor.setCode(saved == null || saved.trim().isEmpty() ? starter() : saved);
         console.setText("Press Run, or Ctrl and Enter together.\n");
         showTab("code");
@@ -221,6 +221,7 @@ public class PuzzlePanel extends JPanel {
 
     private String starter() {
         if (puzzle.index == 0) {
+            // the very first level gets a reminder of the one method there is
             return "// p(x, y, colour) paints one cell\n// the grid is W wide and H tall\n";
         }
         return "";
@@ -228,7 +229,7 @@ public class PuzzlePanel extends JPanel {
 
     private void leave() {
         if (puzzle != null) {
-            profile.code[puzzle.index] = editor.getCode();
+            profile.setCodeFor(puzzle, editor.getCode(), LocalDate.now());
             profile.save();
         }
         frame.showLevels();
@@ -280,7 +281,7 @@ public class PuzzlePanel extends JPanel {
     private void run() {
         if (running || puzzle == null) return;
         final String code = editor.getCode();
-        profile.code[puzzle.index] = code;
+        profile.setCodeFor(puzzle, code, LocalDate.now());
         running = true;
         runButton.setEnabled(false);
         runButton.setText("Running");
@@ -375,11 +376,11 @@ public class PuzzlePanel extends JPanel {
         updateCounter();
         frame.refreshAll();
 
-        boolean hasNext = puzzle.index + 1 < Puzzles.count()
+        boolean hasNext = !puzzle.isDaily() && puzzle.index + 1 < Puzzles.count()
                 && profile.isUnlocked(puzzle.index + 1);
         Runnable next = hasNext ? () -> open(Puzzles.get(puzzle.index + 1), false) : null;
 
-        ResultDialog dialog = new ResultDialog(frame, puzzle, profile.stars[puzzle.index],
+        ResultDialog dialog = new ResultDialog(frame, puzzle, profile.starsFor(puzzle),
                 characters, reward, unlocked, next, frame::showLevels);
         dialog.setVisible(true);
     }
@@ -423,7 +424,7 @@ public class PuzzlePanel extends JPanel {
                 console.setText("Budget raised to " + budget() + " characters for this level.\n");
                 break;
             case SKIP:
-                if (profile.stars[puzzle.index] == 0) {
+                if (!puzzle.isDaily() && profile.stars[puzzle.index] == 0) {
                     profile.stars[puzzle.index] = 1;
                     profile.solved++;
                 }
@@ -500,7 +501,7 @@ public class PuzzlePanel extends JPanel {
 
             g2.setFont(Palette.tracked(23, Font.BOLD, 0.06));
             g2.setColor(Palette.CREAM);
-            String title = "Level " + (puzzle.index + 1) + "   " + puzzle.title;
+            String title = (puzzle.isDaily() ? "Daily   " : "Level " + (puzzle.index + 1) + "   ") + puzzle.title;
             g2.drawString(title, (float) left, 34f);
 
             double after = left + g2.getFontMetrics().stringWidth(title) + 14;
@@ -513,7 +514,7 @@ public class PuzzlePanel extends JPanel {
             g2.drawString(puzzle.chapterName() + "  ·  " + puzzle.brief, (float) left, 58f);
 
             double right = getWidth();
-            Decor.stars(g2, right - 74, 14, 20, profile.stars[puzzle.index]);
+            Decor.stars(g2, right - 74, 14, 20, profile.starsFor(puzzle));
             g2.setFont(Palette.tracked(11, Font.BOLD, 0.12));
             g2.setColor(Palette.alpha(Palette.ROSE, 210));
             String pars = "par " + puzzle.par + "   ·   budget " + budget();

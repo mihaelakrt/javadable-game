@@ -32,6 +32,16 @@ public class Profile {
     public int bestStreak;
     public String lastDaily = "";
 
+    /** Who is playing, and the little badge they chose for themselves. */
+    /** The daily puzzle is not in the catalogue, so its draft lives on its own. */
+    public String dailyCode = "";
+    public String dailyCodeDate = "";
+
+    public String name = "";
+    public String avatarMark = "★";
+    public String avatarColour = "rose";
+    public String firstPlayed = "";
+
     public final int[] stars = new int[Puzzles.count()];
     public final int[] best = new int[Puzzles.count()];
     public final String[] code = new String[Puzzles.count()];
@@ -51,6 +61,56 @@ public class Profile {
 
     public Rank rank() {
         return Rank.of(xp);
+    }
+
+    /** The code left on a level, which for the daily is kept apart and only for today. */
+    public String codeFor(Puzzle puzzle, LocalDate today) {
+        if (!puzzle.isDaily()) {
+            String saved = code[puzzle.index];
+            return saved == null ? "" : saved;
+        }
+        if (!today.toString().equals(dailyCodeDate)) {
+            dailyCode = "";
+            dailyCodeDate = today.toString();
+        }
+        return dailyCode;
+    }
+
+    public void setCodeFor(Puzzle puzzle, String written, LocalDate today) {
+        if (puzzle.isDaily()) {
+            dailyCode = written;
+            dailyCodeDate = today.toString();
+        } else {
+            code[puzzle.index] = written;
+        }
+    }
+
+    public int starsFor(Puzzle puzzle) {
+        return puzzle.isDaily() ? 0 : stars[puzzle.index];
+    }
+
+    /** The name to show, which is never empty. */
+    public String displayName() {
+        return name == null || name.trim().isEmpty() ? "Player one" : name.trim();
+    }
+
+    /** How many of the three stars have been collected, as a percentage. */
+    public int completion() {
+        int possible = stars.length * 3;
+        return possible == 0 ? 0 : Math.round(totalStars() * 100f / possible);
+    }
+
+    /** Characters spent on the levels that have been solved, against their par. */
+    public int[] parRecord() {
+        int under = 0;
+        int over = 0;
+        for (Puzzle puzzle : Puzzles.all()) {
+            int record = best[puzzle.index];
+            if (record <= 0) continue;
+            if (record <= puzzle.par) under++;
+            else over++;
+        }
+        return new int[]{under, over};
     }
 
     public int totalStars() {
@@ -100,13 +160,14 @@ public class Profile {
     public Reward solve(Puzzle puzzle, int characters, boolean firstRun, boolean usedPowerUp) {
         Rank before = rank();
         int earned = puzzle.stars(characters);
-        boolean firstTime = stars[puzzle.index] == 0;
-        boolean improved = best[puzzle.index] == 0 || characters < best[puzzle.index];
+        boolean daily = puzzle.isDaily();
+        boolean firstTime = daily || stars[puzzle.index] == 0;
+        boolean improved = daily || best[puzzle.index] == 0 || characters < best[puzzle.index];
 
-        if (firstTime) solved++;
+        if (firstTime && !daily) solved++;
         if (firstRun) cleanSolves++;
-        if (earned > stars[puzzle.index]) stars[puzzle.index] = earned;
-        if (improved) best[puzzle.index] = characters;
+        if (!daily && earned > stars[puzzle.index]) stars[puzzle.index] = earned;
+        if (!daily && improved) best[puzzle.index] = characters;
 
         int gainedXp = firstTime ? 60 + earned * 30 + puzzle.chapter * 10 : (improved ? 25 : 10);
         if (puzzle.boss && firstTime) gainedXp += 40;
@@ -195,6 +256,12 @@ public class Profile {
             profile.streak = Json.getInt(map, "streak", 0);
             profile.bestStreak = Json.getInt(map, "bestStreak", 0);
             profile.lastDaily = Json.getString(map, "lastDaily", "");
+            profile.dailyCode = Json.getString(map, "dailyCode", "");
+            profile.dailyCodeDate = Json.getString(map, "dailyCodeDate", "");
+            profile.name = Json.getString(map, "name", "");
+            profile.avatarMark = Json.getString(map, "avatarMark", "★");
+            profile.avatarColour = Json.getString(map, "avatarColour", "rose");
+            profile.firstPlayed = Json.getString(map, "firstPlayed", "");
 
             readInts(Json.asList(map.get("stars")), profile.stars);
             readInts(Json.asList(map.get("best")), profile.best);
@@ -235,6 +302,13 @@ public class Profile {
             map.put("streak", streak);
             map.put("bestStreak", bestStreak);
             map.put("lastDaily", lastDaily);
+            map.put("dailyCode", dailyCode);
+            map.put("dailyCodeDate", dailyCodeDate);
+            map.put("name", name);
+            map.put("avatarMark", avatarMark);
+            map.put("avatarColour", avatarColour);
+            if (firstPlayed.isEmpty()) firstPlayed = LocalDate.now().toString();
+            map.put("firstPlayed", firstPlayed);
 
             List<Object> starList = new ArrayList<>();
             for (int value : stars) starList.add(value);

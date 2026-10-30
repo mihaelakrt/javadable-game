@@ -1,103 +1,126 @@
 # Javadable
 
-A code-golf puzzle game for the desktop. Every level shows a target picture; you write Java
+A code golf puzzle game for the desktop. Every level shows a target picture; you write Java
 that paints the same picture on the grid, in as few characters as you can. Your code is
 compiled live by the JDK compiler while you play.
 
-Thirty levels in six chapters, a palette of 24 colours and a set of marks and emoji you can
-write on the cells, a free-draw Studio that turns your drawing back into code, daily puzzles
-with a streak, stars, coins and badges. Pure Java Swing, no dependencies.
-
-Double click `Javadable.bat` to play. A JDK is required, not just a JRE.
-
-The rest of this file is in Bulgarian.
+**[The game has a page of its own.](https://mihaelakrt.github.io/javadable-game/)**
+300 levels, a new generated puzzle every day, 24 colours, marks and emoji, a drawing Studio
+that writes your code for you, and a profile that keeps the lot.
 
 ![The puzzle screen](docs/puzzle.png)
 
-| | |
-|---|---|
-| ![Home](docs/home.png) | ![Levels](docs/levels.png) |
+## Playing
 
-![Studio](docs/studio.png)
+Double click `Javadable.bat`, or run the jar from the
+[latest release](https://github.com/mihaelakrt/javadable-game/releases/latest):
 
+    java -jar javadable-1.1.jar
 
+A **JDK** is required, not just a JRE, because the game compiles your code while it runs.
+Eclipse Temurin 21 is a good choice. `Javadable.bat` finds a JDK on its own, or set `JAVA_HOME`.
 
-Пъзел игра с код в духа на pydle, но на Java, с тъмен стъклен (glassmorphism) интерфейс
-върху почти черен фон с бавно движещи се копринени гънки.
+Check that everything is in place:
 
-Всяко ниво показва картинка вдясно. Ти пишеш код вляво, натискаш **Run**, и ако твоята мрежа
-стане същата като целевата — нивото е решено. Броят на символите има значение: под par са три
-звезди, в рамките на бюджета са две.
+    java -jar javadable-1.1.jar --selftest
 
-## Пускане
+## Writing a sketch
 
-Двоен клик на **Javadable.bat**.
+The editor holds the body of a `draw()` method, so you write ordinary Java: loops, conditions,
+arrays, `Math`, whatever you like. The whole drawing language is one method:
 
-Трябва JDK (не само JRE), защото играта компилира твоя код наживо, докато играеш.
-Инсталираният е Eclipse Temurin 21. Скриптът го намира сам; ако имаш друг, сложи `JAVA_HOME`.
+```java
+p(x, y, "red");           // paint one cell
+p(x, y, "sky", "J");      // paint a cell and write a mark on it
+in(x, y)                  // true when the cell is on the grid
+print(anything)           // a line in the Console tab
+W, H                      // the width and height of this level
+```
 
-Проверка дали всичко е наред:
+The second level, a cyan line across the middle, is this:
 
-    java -jar build\javadable.jar --selftest
+```java
+for (int x = 0; x < W; x++) {
+    p(x, 2, "cyan");
+}
+```
 
-## Как се пише
+**Ctrl and Enter** runs the sketch, **Escape** goes back to the levels.
 
-Редакторът е тялото на метод `draw()`, тоест пишеш обикновена Java — цикли, условия, масиви, `Math`.
-Целият език за рисуване е един метод:
+## The budget
 
-    p(x, y, "red");              // оцветява една клетка
-    p(x, y, "sky", "J");         // клетка с надпис върху нея
-    in(x, y)                     // вярно, ако клетката съществува
-    print(нещо)                  // ред в таба Console
-    W, H                         // ширина и височина на нивото
+Only characters that are not whitespace count, and comments do not count at all, so lay the
+code out however you like. Finish under par for three stars, inside the budget for two, and
+anything that matches the picture keeps one.
 
-**Ctrl + Enter** пуска кода, **Escape** се връща към нивата.
+## The palette
 
-## Палитрата и знаците
+The bar under the grids holds all 24 colours: ink, deep, plum, mauve, rose, cream, white,
+black, red, coral, orange, gold, yellow, lime, green, mint, teal, cyan, sky, blue, navy,
+purple, pink, brown. Click one and it is written into your code at the caret.
 
-Под мрежите стои лентата с всички 24 цвята. Клик върху цвят го пише в кода на мястото на курсора,
-така че не се налага да помниш имената. Бутонът PALETTE вляво обръща лентата към знаците:
-звезди, сърца, точки и шепа емоджи, които влизат като четвърти аргумент на p и се рисуват
-върху клетката. Цветовете са:
+Click **PALETTE** on the left of that bar and it flips over to the marks: stars, hearts, dots,
+and a dozen emoji. A mark is the fourth argument of `p`, and it is drawn on top of the cell.
 
-ink, deep, plum, mauve, rose, cream, white, black, red, coral, orange, gold, yellow, lime,
-green, mint, teal, cyan, sky, blue, navy, purple, pink, brown.
+![Home](docs/home.png)
+
+## Levels
+
+**300 levels in 33 chapters.** The first thirty are drawn by hand: a dot, a horizon, four
+corners, a plus, a frame, a diagonal, a cross, a zigzag, an arrow, a checkerboard, the palette
+itself, a staircase, stripes, a smiley, rings, a diamond, a tree, a house, a ghost, an arcade
+invader, the word JAVA, a wave, a die, a rainbow, a Sierpinski triangle, a bullseye, a flower,
+a cat, a labyrinth and a mandala. The last level of every chapter is a boss.
+
+The other 270 are generated. Each pattern family (rings, bullseyes, blocks, chevrons, stripes,
+diamonds, discs, crosses, saltires, steps, frames, weaves, dots and symmetric signs) is produced
+twice: once as the picture to aim at and once as the code that draws it. The budget is measured
+from that reference solution, so par is never guesswork, and every level is known to be
+solvable before you see it. The grids grow from 5x5 to 12x12 as the tiers climb.
+
+## The daily puzzle
+
+Every day the generator makes up a puzzle from the date alone: the same picture for everyone
+playing that day, and one nobody has played before. Solving it moves your streak along.
+
+![Levels](docs/levels.png)
 
 ## Studio
 
-Отделен режим за свободно рисуване. Избираш цвят от палитрата, рисуваш с мишката
-(десен бутон трие), а играта пише кода, който би нарисувал същото — с цикли, където има
-поредица от еднакви клетки. Бутонът **Copy code** го слага в клипборда.
+A free drawing mode. Pick a colour and a mark, draw on the grid with the mouse (right click
+rubs out), resize the canvas from 4x4 to 14x14, and the game writes the code that would draw
+the same picture, folding runs of equal cells into loops. **Copy code** puts it on the clipboard.
 
-## Нивата
+![Studio](docs/studio.png)
 
-30 нива в шест глави по пет, кръстени на цветовете: Midnight, Indigo, Plum, Mauve,
-Rose, Cream. Последното ниво на всяка глава е бос. Мрежата расте от 5x5 до 9x9, а
-картинките са точка, хоризонт, ъгли, кръст, рамка, диагонал, X, зигзаг, стрелка,
-шахматна дъска, палитрата, стълба, райета, усмивка, пръстени, диамант, дърво, къща,
-дух, нашественик от аркадата, надпис JAVA, вълна, зар, дъга, триъгълник на Сиерпински,
-мишена, цвете, котка, лабиринт и мандала.
+## Profile
 
-## Бюджетът
+Your name, a badge of your own colour and mark, your rank and experience, and a line for every
+level with its stars, your best character count and how it sits against par. Twelve badges to
+collect, a daily puzzle with a streak, coins and four helpers: **Hint** spells out the rule
+behind the picture, **Diff** outlines the cells that are still wrong, **Elbow room** adds fifty
+characters to the budget and **Skip** opens the next level.
 
-Броят се само символите, които не са празно място, и коментарите не се броят. Подреждай кода
-както ти е удобно — отстъпите и новите редове са безплатни.
+![Profile](docs/profile.png)
 
-## Помощници
+## Where the progress is kept
 
-С монети от решени нива се купуват четири неща: **Hint** казва правилото зад картинката,
-**Diff** огражда клетките, които още не съвпадат, **Elbow room** добавя 50 символа към бюджета,
-**Skip** отключва следващото ниво без да решаваш това.
+`C:\Users\<you>\.javadable\profile.json` holds the stars, the best character counts, the coins,
+the badges and the code you left on every level. Delete it to start over.
 
-## Дневен пъзел и стрийк
+## Building
 
-Дневният пъзел е един и същ за целия ден. Решавай по един на ден, за да расте стрийкът.
+Double click `build.bat`, which compiles `src` into `build/classes` and packs
+`build/javadable.jar`. Nothing but a JDK is needed; there are no dependencies.
 
-## Къде се пази прогресът
+## How it works
 
-`C:\Users\<ти>\.javadable\profile.json` — звезди, най-добри бройки символи, монети, значки
-и кодът, който си оставил на всяко ниво. Изтриеш ли файла, започваш начисто.
+`javadable.core.Runner` wraps what you typed in a class, compiles it in memory with
+`javax.tools.JavaCompiler`, loads it with a small class loader and runs `draw()` on a daemon
+thread with a two and a half second limit. The picture you paint is a `javadable.core.Canvas`,
+which is compared with the level's own canvas cell by cell. Everything on screen is drawn by
+hand with Java2D: the drifting backdrop, the frosted glass, the tiles and the typography.
 
-## Пресглобяване
+## Licence
 
-Двоен клик на **build.bat**.
+MIT, see [LICENSE](LICENSE).

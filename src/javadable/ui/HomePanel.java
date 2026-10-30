@@ -46,7 +46,7 @@ public class HomePanel extends JPanel {
         daily.addActionListener(e -> frame.play(Puzzles.daily(LocalDate.now()), true));
         links.add(daily);
         links.add(link("Studio", e -> frame.showStudio()));
-        links.add(link("Stats", e -> frame.showStats()));
+        links.add(link("Profile", e -> frame.showProfile()));
         links.add(link("How to play", e -> new HelpDialog(frame).setVisible(true)));
         links.add(link("Quit", e -> {
             profile.save();
@@ -191,7 +191,8 @@ public class HomePanel extends JPanel {
             Graphics2D g2 = Palette.smooth(g.create());
             Rank rank = profile.rank();
             int next = rank.nextAt();
-            String text = rank.label.toUpperCase()
+            String text = profile.displayName().toUpperCase()
+                    + "   ·   " + rank.label.toUpperCase()
                     + "   ·   " + profile.xp + (next < 0 ? " XP" : " / " + next + " XP")
                     + "   ·   STREAK " + profile.streak
                     + "   ·   " + profile.coins + " COINS"

@@ -39,8 +39,14 @@ public class Puzzle {
         return target.height;
     }
 
+    /** True for the daily puzzle, which lives outside the catalogue. */
+    public boolean isDaily() {
+        return index < 0;
+    }
+
     public String chapterName() {
-        return Puzzles.CHAPTERS[chapter];
+        if (isDaily()) return "Daily";
+        return Puzzles.CHAPTERS[Math.max(0, Math.min(chapter, Puzzles.CHAPTERS.length - 1))];
     }
 
     /** Three stars under par, two inside the limit, one for solving it at all. */

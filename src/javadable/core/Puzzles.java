@@ -12,9 +12,14 @@ public final class Puzzles {
         void paint(Canvas canvas);
     }
 
-    public static final String[] CHAPTERS = {
+    /** How many levels the generator adds behind the hand made ones. */
+    public static final int GENERATED = 270;
+
+    private static final String[] CHAPTER_BASE = {
             "Midnight", "Indigo", "Plum", "Mauve", "Rose", "Cream"
     };
+
+    public static String[] CHAPTERS = CHAPTER_BASE;
 
     private static final String[] PALETTE = {"ink", "deep", "plum", "mauve", "rose", "cream"};
     private static final List<Puzzle> ALL = new ArrayList<>();
@@ -38,10 +43,16 @@ public final class Puzzles {
         return ALL.size();
     }
 
-    /** The same level for everyone on a given day. */
+    /**
+     * A fresh level for the day, made up on the spot from the date, so everyone
+     * playing on the same day gets the same picture and nobody has seen it before.
+     */
     public static Puzzle daily(LocalDate date) {
-        int index = (int) Math.floorMod(date.toEpochDay() * 7 + 3, ALL.size());
-        return ALL.get(index);
+        long seed = date.toEpochDay();
+        int tier = 2 + (int) Math.floorMod(seed, 6);
+        Generator.Made made = Generator.make(seed * 7919 + 13, tier);
+        return new Puzzle(-1, 0, made.title, made.brief, made.hint, false,
+                made.par(), made.limit(), made.target);
     }
 
     private static void add(int chapter, String title, String brief, String hint, boolean boss,
@@ -426,5 +437,28 @@ public final class Puzzles {
                         }
                     }
                 });
+
+        grow();
+    }
+
+    /** Fills the rest of the catalogue with generated levels. */
+    private static void grow() {
+        int handMade = ALL.size();
+        for (int i = 0; i < GENERATED; i++) {
+            int tier = Math.min(9, i * 10 / GENERATED);
+            Generator.Made made = Generator.make(104729L + i * 31L, tier);
+            int chapter = handMade / 5 + i / 10;
+            boolean boss = i % 10 == 9;
+            ALL.add(new Puzzle(ALL.size(), chapter, made.title, made.brief, made.hint,
+                    boss, made.par(), made.limit(), made.target));
+        }
+
+        int chapters = handMade / 5 + GENERATED / 10;
+        CHAPTERS = new String[chapters];
+        for (int i = 0; i < chapters; i++) {
+            CHAPTERS[i] = i < CHAPTER_BASE.length
+                    ? CHAPTER_BASE[i]
+                    : CHAPTER_BASE[i % CHAPTER_BASE.length] + " " + (i / CHAPTER_BASE.length + 1);
+        }
     }
 }

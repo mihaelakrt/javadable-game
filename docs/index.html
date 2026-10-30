@@ -1,0 +1,156 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Javadable</title>
+<meta name="description" content="A code golf puzzle game: every level shows a picture, you write Java that paints it in as few characters as you can.">
+<style>
+  :root {
+    --ink: #190019;
+    --deep: #2b124c;
+    --plum: #522b5b;
+    --mauve: #854f6c;
+    --rose: #dfb6b2;
+    --cream: #fbe4d8;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    background: #0b0410;
+    color: var(--cream);
+    font-family: "Segoe UI", system-ui, -apple-system, "Helvetica Neue", Arial, sans-serif;
+    line-height: 1.6;
+    overflow-x: hidden;
+  }
+  .silk {
+    position: fixed; inset: -20vmax; z-index: -1;
+    background:
+      radial-gradient(45vmax 55vmax at 22% 28%, rgba(133,79,108,.42), transparent 70%),
+      radial-gradient(40vmax 50vmax at 78% 22%, rgba(82,43,91,.46), transparent 70%),
+      radial-gradient(38vmax 48vmax at 62% 84%, rgba(223,182,178,.20), transparent 70%),
+      radial-gradient(30vmax 40vmax at 12% 86%, rgba(43,18,76,.55), transparent 70%),
+      #0b0410;
+    filter: blur(2px);
+  }
+  .wrap { max-width: 1060px; margin: 0 auto; padding: 0 24px; }
+  .sheet {
+    background: rgba(255,255,255,.045);
+    border: 1px solid rgba(255,255,255,.17);
+    border-radius: 30px;
+    padding: 46px 44px 38px;
+    margin: 56px 0;
+    backdrop-filter: blur(26px);
+    -webkit-backdrop-filter: blur(26px);
+    box-shadow: 0 30px 80px rgba(0,0,0,.45);
+  }
+  .top { display: flex; justify-content: space-between; font-size: 12px;
+         letter-spacing: .08em; color: rgba(251,228,216,.68); }
+  h1 { font-size: clamp(38px, 6vw, 62px); font-weight: 400; letter-spacing: -.02em;
+       line-height: 1.08; margin: 40px 0 12px; }
+  h1 span { display: block; }
+  .lead { color: var(--rose); max-width: 56ch; margin: 0 0 30px; }
+  .row { display: flex; gap: 12px; flex-wrap: wrap; align-items: center; }
+  a.button {
+    display: inline-block; padding: 13px 26px; border-radius: 999px;
+    text-decoration: none; font-weight: 600; font-size: 14px; letter-spacing: .04em;
+    background: var(--cream); color: var(--ink); border: 1px solid rgba(255,255,255,.7);
+  }
+  a.ghost { background: rgba(255,255,255,.07); color: var(--cream);
+            border: 1px solid rgba(255,255,255,.35); }
+  a.button:hover { background: var(--rose); }
+  a.ghost:hover { background: rgba(255,255,255,.16); }
+  h2 { font-weight: 400; font-size: 26px; letter-spacing: -.01em; margin: 0 0 14px; }
+  p { color: rgba(251,228,216,.82); }
+  pre {
+    background: rgba(10,0,14,.72); border: 1px solid rgba(255,255,255,.12);
+    border-radius: 16px; padding: 18px 20px; overflow-x: auto;
+    font-family: Consolas, "SF Mono", Menlo, monospace; font-size: 14px; color: var(--cream);
+  }
+  .shot { width: 100%; border-radius: 18px; border: 1px solid rgba(255,255,255,.14);
+          display: block; margin: 22px 0; }
+  .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 18px; }
+  .card { background: rgba(255,255,255,.045); border: 1px solid rgba(255,255,255,.14);
+          border-radius: 20px; padding: 22px 24px; }
+  .card h3 { margin: 0 0 6px; font-size: 16px; font-weight: 600; letter-spacing: .01em; }
+  .card p { margin: 0; font-size: 14px; }
+  .swatches { display: flex; gap: 7px; flex-wrap: wrap; margin: 6px 0 2px; }
+  .sw { width: 26px; height: 26px; border-radius: 9px; border: 1px solid rgba(255,255,255,.35); }
+  footer { color: rgba(251,228,216,.55); font-size: 13px; padding: 0 0 60px; text-align: center; }
+  footer a { color: var(--rose); }
+</style>
+</head>
+<body>
+<div class="silk"></div>
+
+<div class="wrap">
+  <section class="sheet">
+    <div class="top"><span>Code puzzle / Draw it with loops</span><span>+Javadable</span></div>
+    <h1><span>Three hundred pictures.</span><span>One method.</span><span>Fewer characters.</span></h1>
+    <p class="lead">Every level shows a picture. You write Java that paints the same picture on
+      the grid, in as few characters as you can. Your code is compiled while you play, by the
+      real compiler.</p>
+    <div class="row">
+      <a class="button" href="https://github.com/mihaelakrt/javadable-game/releases/latest">Download the jar</a>
+      <a class="button ghost" href="https://github.com/mihaelakrt/javadable-game">Source on GitHub</a>
+    </div>
+  </section>
+
+  <section class="sheet">
+    <h2>The whole language is one method</h2>
+<pre>for (int x = 0; x &lt; W; x++) {
+    p(x, 2, "cyan");
+}</pre>
+    <p><code>p(x, y, colour)</code> paints a cell, a fourth argument writes a mark or an emoji on
+      it, and <code>W</code> and <code>H</code> are the size of the grid. Everything else is
+      ordinary Java: loops, conditions, arrays, <code>Math</code>.</p>
+    <img class="shot" src="puzzle.png" alt="The puzzle screen">
+  </section>
+
+  <section class="sheet">
+    <h2>What is in it</h2>
+    <div class="grid">
+      <div class="card"><h3>300 levels</h3><p>Thirty drawn by hand, the rest generated, each one
+        with a solution that is known to exist, which is how the budget is set.</p></div>
+      <div class="card"><h3>A new daily</h3><p>Every day the game makes up a puzzle nobody has
+        seen, the same one for everyone, and keeps your streak.</p></div>
+      <div class="card"><h3>24 colours and marks</h3><p>Click a colour and it lands in your code.
+        Flip the bar over for stars, hearts and emoji to write on the cells.</p>
+        <div class="swatches">
+          <span class="sw" style="background:#f2415a"></span>
+          <span class="sw" style="background:#ff7f6b"></span>
+          <span class="sw" style="background:#f5c74a"></span>
+          <span class="sw" style="background:#a6e063"></span>
+          <span class="sw" style="background:#7fe3c4"></span>
+          <span class="sw" style="background:#5cd8f2"></span>
+          <span class="sw" style="background:#9158de"></span>
+          <span class="sw" style="background:#f18fd0"></span>
+        </div>
+      </div>
+      <div class="card"><h3>Studio</h3><p>Draw with the mouse and the game writes the code back
+        to you, folding runs of cells into loops.</p></div>
+      <div class="card"><h3>A profile</h3><p>A name and a badge of your own, your rank, and every
+        level with its stars and your best character count against par.</p></div>
+      <div class="card"><h3>No dependencies</h3><p>Pure Java Swing. Every pixel on screen is
+        drawn by hand with Java2D.</p></div>
+    </div>
+    <img class="shot" src="levels.png" alt="The levels screen">
+    <img class="shot" src="studio.png" alt="The Studio screen">
+  </section>
+
+  <section class="sheet">
+    <h2>Playing it</h2>
+    <p>Download the jar from the release and start it with a <strong>JDK</strong>, not just a
+      JRE, because the game compiles your code while it runs.</p>
+<pre>java -jar javadable-1.1.jar</pre>
+    <p>Or clone the repository and double click <code>Javadable.bat</code> on Windows, which
+      builds it and starts it.</p>
+  </section>
+
+  <footer>
+    Made with Java and Swing. MIT licensed.
+    <a href="https://github.com/mihaelakrt/javadable-game">github.com/mihaelakrt/javadable-game</a>
+  </footer>
+</div>
+</body>
+</html>

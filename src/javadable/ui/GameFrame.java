@@ -21,7 +21,7 @@ public class GameFrame extends JFrame {
     private final JPanel root;
     private final HomePanel home;
     private final LevelsPanel levels;
-    private final StatsPanel stats;
+    private final ProfilePanel profilePanel;
     private final StudioPanel studio;
     private final PuzzlePanel puzzlePanel;
 
@@ -46,13 +46,13 @@ public class GameFrame extends JFrame {
 
         home = new HomePanel(this, profile);
         levels = new LevelsPanel(this, profile);
-        stats = new StatsPanel(this, profile);
+        profilePanel = new ProfilePanel(this, profile);
         studio = new StudioPanel(this);
         puzzlePanel = new PuzzlePanel(this, profile);
 
         root.add(home, "home");
         root.add(levels, "levels");
-        root.add(stats, "stats");
+        root.add(profilePanel, "profile");
         root.add(studio, "studio");
         root.add(puzzlePanel, "puzzle");
 
@@ -102,10 +102,10 @@ public class GameFrame extends JFrame {
         });
     }
 
-    public void showStats() {
+    public void showProfile() {
         Fade.swap(root, () -> {
-            stats.refresh();
-            cards.show(root, "stats");
+            profilePanel.refresh();
+            cards.show(root, "profile");
         });
     }
 
@@ -119,7 +119,7 @@ public class GameFrame extends JFrame {
     public void refreshAll() {
         home.refresh();
         levels.refresh();
-        stats.refresh();
+        profilePanel.refresh();
         repaint();
     }
 }
