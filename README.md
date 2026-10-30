@@ -12,6 +12,15 @@ Double click `Javadable.bat` to play. A JDK is required, not just a JRE.
 
 The rest of this file is in Bulgarian.
 
+![The puzzle screen](docs/puzzle.png)
+
+| | |
+|---|---|
+| ![Home](docs/home.png) | ![Levels](docs/levels.png) |
+
+![Studio](docs/studio.png)
+
+
 
 Пъзел игра с код в духа на pydle, но на Java, с тъмен стъклен (glassmorphism) интерфейс
 върху почти черен фон с бавно движещи се копринени гънки.
